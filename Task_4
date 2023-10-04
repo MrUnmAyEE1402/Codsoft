@@ -1,0 +1,45 @@
+import numpy as np
+
+# Sample user-item rating matrix (user IDs as rows, item IDs as columns)
+ratings = np.array([
+    [5, 4, 0, 0, 1],
+    [0, 0, 5, 4, 2],
+    [2, 3, 0, 1, 5],
+    [0, 0, 4, 5, 3]
+])
+
+# User IDs and item IDs
+user_ids = ['User1', 'User2', 'User3', 'User4']
+item_ids = ['Item1', 'Item2', 'Item3', 'Item4', 'Item5']
+
+# Function to calculate user-based collaborative filtering recommendations
+def user_based_collaborative_filtering(user_id, ratings_matrix, k=2):
+    user_ratings = ratings_matrix[user_id]
+    similar_users = []
+
+    for i, other_user_ratings in enumerate(ratings_matrix):
+        if i != user_id:
+            similarity = np.dot(user_ratings, other_user_ratings) / (np.linalg.norm(user_ratings) * np.linalg.norm(other_user_ratings))
+            similar_users.append((i, similarity))
+
+    # Sort similar users by similarity score in descending order
+    similar_users.sort(key=lambda x: x[1], reverse=True)
+
+    recommendations = []
+    for _ in range(k):
+        similar_user_id, similarity_score = similar_users[_]
+        for item_id, rating in enumerate(ratings_matrix[similar_user_id]):
+            if rating > 0 and ratings_matrix[user_id][item_id] == 0:
+                recommendations.append((item_ids[item_id], similarity_score))
+
+    recommendations.sort(key=lambda x: x[1], reverse=True)
+
+    return recommendations
+
+# Example: Get recommendations for 'User1'
+user_id = 0
+recommendations = user_based_collaborative_filtering(user_id, ratings, k=3)
+
+print(f"Top recommendations for {user_ids[user_id]}:")
+for item, score in recommendations:
+    print(f"{item} (Score: {score})")
