@@ -1,0 +1,66 @@
+import random
+
+# Define a function to generate a response based on user input
+def chatbot_response(user_input):
+    # Convert user input to lowercase for case-insensitive matching
+    user_input = user_input.lower()
+
+    # Define some predefined rules and responses
+    greetings = ["hello", "hi", "hey", "howdy"]
+    farewell = ["bye", "goodbye", "see you", "take care"]
+    questions = {
+        "name": ["what's your name", "your name", "who are you"],
+        "gender": ["your gender", "what's your gender", "are you a boy or a girl"],
+        "age": ["your age", "how old are you", "age"],
+        "school": ["which school did you go to", "your school", "school"],
+        "college": ["which college did you attend", "your college", "college"],
+        "hobbies": ["what are your hobbies", "your hobbies", "hobbies"],
+        "weather": ["how's the weather", "weather today", "weather"],
+        "temperature": ["current temperature", "temperature today", "temperature"],
+        "rainy": ["is it raining", "rainy weather", "rain"],
+        "summer": ["summer season", "hot weather", "summer"],
+        "winter": ["winter season", "cold weather", "winter"]
+    }
+
+    # Check if the user input matches any predefined rules
+    if any(greeting in user_input for greeting in greetings):
+        return "Hello! How can I assist you today?"
+    elif any(farewell in user_input for farewell in farewell):
+        return "Goodbye! Have a great day!"
+    else:
+        for category, keywords in questions.items():
+            if any(keyword in user_input for keyword in keywords):
+                if category == "name":
+                    return "I'm just a simple chatbot. You can call me chatbot."
+                elif category == "gender":
+                    return "I'm a gender-neutral chatbot."
+                elif category == "age":
+                    return "I don't have an age. I'm a computer program."
+                elif category == "school":
+                    return "I didn't go to school. I'm a virtual assistant."
+                elif category == "college":
+                    return "I didn't attend college. I'm here to help you."
+                elif category == "hobbies":
+                    return "I enjoy chatting with users like you!"
+                elif category == "weather":
+                    return "I'm sorry, I cannot provide real-time weather information."
+                elif category == "temperature":
+                    return "I cannot provide real-time temperature information."
+                elif category == "rainy":
+                    return "I don't have access to current weather conditions."
+                elif category == "summer":
+                    return "I cannot experience seasons, but I can provide information about them."
+                elif category == "winter":
+                    return "Winter is a cold season, perfect for cozying up with a good book!"
+
+        return "I'm sorry, I don't understand. Can you please rephrase your question?"
+
+# Main loop to simulate a conversation
+while True:
+    user_input = input("You: ")
+    if user_input.lower() == "exit":
+        print("Chatbot: Goodbye!")
+        brea
+    else:
+        response = chatbot_response(user_input)
+        print("Chatbot:", response)
