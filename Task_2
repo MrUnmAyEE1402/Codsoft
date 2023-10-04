@@ -1,0 +1,125 @@
+import random
+
+# Constants for player and AI
+PLAYER = 'X'
+AI = 'O'
+
+# Function to print the Tic-Tac-Toe board
+def print_board(board):
+    for row in board:
+        print(" | ".join(row))
+        print("-" * 9)
+
+# Function to check if the game is over
+def is_game_over(board):
+    return check_winner(board, PLAYER) or check_winner(board, AI) or len(empty_cells(board)) == 0
+
+# Function to check if a player has won
+def check_winner(board, player):
+    for row in board:
+        if all(cell == player for cell in row):
+            return True
+
+    for col in range(3):
+        if all(board[row][col] == player for row in range(3)):
+            return True
+
+    if all(board[i][i] == player for i in range(3)) or all(board[i][2 - i] == player for i in range(3)):
+        return True
+
+    return False
+
+# Function to find empty cells on the board
+def empty_cells(board):
+    return [(row, col) for row in range(3) for col in range(3) if board[row][col] == ' ']
+
+# Minimax function with Alpha-Beta Pruning
+def minimax(board, depth, is_maximizing, alpha, beta):
+    if check_winner(board, PLAYER):
+        return -1
+    if check_winner(board, AI):
+        return 1
+    if len(empty_cells(board)) == 0:
+        return 0
+
+    if is_maximizing:
+        max_eval = float('-inf')
+        for row, col in empty_cells(board):
+            board[row][col] = AI
+            eval = minimax(board, depth + 1, False, alpha, beta)
+            board[row][col] = ' '
+            max_eval = max(max_eval, eval)
+            alpha = max(alpha, eval)
+            if beta <= alpha:
+                break
+        return max_eval
+    else:
+        min_eval = float('inf')
+        for row, col in empty_cells(board):
+            board[row][col] = PLAYER
+            eval = minimax(board, depth + 1, True, alpha, beta)
+            board[row][col] = ' '
+            min_eval = min(min_eval, eval)
+            beta = min(beta, eval)
+            if beta <= alpha:
+                break
+        return min_eval
+
+# Function to make the AI's move using minimax with alpha-beta pruning
+def ai_move(board):
+    best_move = None
+    best_eval = float('-inf')
+    alpha = float('-inf')
+    beta = float('inf')
+
+    for row, col in empty_cells(board):
+        board[row][col] = AI
+        eval = minimax(board, 0, False, alpha, beta)
+        board[row][col] = ' '
+        if eval > best_eval:
+            best_eval = eval
+            best_move = (row, col)
+
+    return best_move
+
+# Main game loop
+def main():
+    board = [[' ' for _ in range(3)] for _ in range(3)]
+
+    print("Welcome to Tic-Tac-Toe! You are 'X', and the AI is 'O'.")
+    print_board(board)
+
+    while True:
+        player_row, player_col = map(int, input("Enter your move (row and column, e.g., '1 2'): ").split())
+        player_row -= 1
+        player_col -= 1
+
+        if board[player_row][player_col] == ' ':
+            board[player_row][player_col] = PLAYER
+        else:
+            print("Invalid move. Try again.")
+            continue
+
+        print_board(board)
+
+        if check_winner(board, PLAYER):
+            print("Congratulations! You win!")
+            break
+        elif len(empty_cells(board)) == 0:
+            print("It's a draw!")
+            break
+
+        print("AI's turn:")
+        ai_row, ai_col = ai_move(board)
+        board[ai_row][ai_col] = AI
+        print_board(board)
+
+        if check_winner(board, AI):
+            print("AI wins! Better luck next time.")
+            break
+        elif len(empty_cells(board)) == 0:
+            print("It's a draw!")
+            break
+
+if __name__ == "__main__":
+    main()
